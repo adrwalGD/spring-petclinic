@@ -27,8 +27,8 @@ pipeline {
         }
         stage('Build docker image') {
             steps {
-                sh 'docker build -t adrwalgd/mr:\'$(git log -1 --oneline --pretty=%B)\' .'
-                sh 'docker push adrwalgd/mr:\'$(git log -1 --oneline --pretty=%B)\''
+                sh 'docker build -t adrwalgd/mr:$GIT_COMMIT .'
+                sh 'docker push adrwalgd/mr:$GIT_COMMIT'
             }
         }
     }
