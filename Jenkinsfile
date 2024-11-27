@@ -9,9 +9,26 @@ pipeline {
     stages {
         stage('Checkstyle') {
             steps {
+                sh 'env'
                 sh 'mvn checkstyle:checkstyle'
                 sh 'tar -czf checkstyle-result.tar.gz target/reports'
                 archiveArtifacts artifacts: 'checkstyle-result.tar.gz', onlyIfSuccessful: true
+            }
+        }
+        stage('Tests') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+        stage('Build without tests') {
+            steps {
+                sh 'mvn package -DskipTests'
+            }
+        }
+        stage('Build docker image') {
+            steps {
+                sh 'docker build -t adrwalgd/mr:\'$(git log -1 --oneline --pretty=%B)\' .'
+                sh 'docker push adrwalgd/mr:\'$(git log -1 --oneline --pretty=%B)\''
             }
         }
     }
