@@ -27,8 +27,12 @@ pipeline {
         }
         stage('Build docker image') {
             steps {
-                sh 'docker build -t adrwalgd/mr:$GIT_COMMIT .'
-                sh 'docker push adrwalgd/mr:$GIT_COMMIT'
+                script {
+                    docker.build("adrwalgd/mr:$GIT_COMMIT")
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
+                        docker.image("adrwalgd/mr:$GIT_COMMIT").push()
+                    }
+                }
             }
         }
     }
